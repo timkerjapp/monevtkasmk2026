@@ -141,6 +141,8 @@
   .rec p{margin:0;color:var(--ink-2);font-size:14px}
   .rec .btn{margin-left:auto}
   .rec-list{display:grid;gap:10px;width:100%}
+  .video{width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000}
+  .video iframe{width:100%;height:100%;border:0;display:block}
 
   footer{padding:36px 0 48px;color:var(--ink-3);font-size:13px;border-top:1px solid var(--line);margin-top:28px}
   svg{flex-shrink:0}
@@ -251,14 +253,16 @@
    PENGATURAN — ubah tautan di sini saja.
    ===================================================================== */
 const CONFIG = {
-  materi:   "https://drive.google.com/drive/folders/1osmEbRVwZDwxuORF_aykfw7yTD8z8qXT",
+  materi:   "https://drive.google.com/drive/folders/1PM3zbPqJdEnEvGz780KSrTZ_uDbhBXkc",
   kontak:   "https://docs.google.com/spreadsheets/d/1xPOAp0esA-nxS1cTRXEHih8K50Q-eYpo/edit?usp=drive_link&ouid=116690930466348386669&rtpof=true&sd=true",
   cetak:    "https://drive.google.com/drive/folders/1BKjH1gnONE5Bs_Ml8aLqBWQHHWjOKu_N?usp=drive_link",
   unggahFoto: "https://docs.google.com/forms/d/e/1FAIpQLSdaApq66VyrdxYPA8JRcZgMIY1XTeixjleEqW-1wI0OBJi6EA/viewform",
 
   /* Rekaman: kosongkan [] jika belum ada. Contoh isi:
      { judul: "Pembekalan Supervisor – Sesi 1", url: "https://youtu.be/xxxx" } */
-  rekaman: [],
+  rekaman: [
+    { judul: "Rekaman Pembekalan Supervisi TKA & AN SMK 2026", url: "https://drive.google.com/file/d/1YDg8LSpP31_kv0CdTH_H0HQTsazlpCcx/view?usp=sharing" },
+  ],
 
   instrumen: [
     { tag:"OBS", judul:"Lembar Observasi Pelaksanaan TKA & AN", responden:"Observasi ruang ujian", butir:"17 butir checklist (Ya/Tidak/NA)",
@@ -352,10 +356,15 @@ if (!CONFIG.rekaman.length) {
   recEl.innerHTML = `<div class="rec"><div class="rec-icon">${ic.play}</div>
     <div><h3>Belum tersedia</h3><p>Rekaman pembekalan akan ditambahkan di sini setelah kegiatan berlangsung.</p></div></div>`;
 } else {
-  recEl.innerHTML = `<div class="rec-list">` + CONFIG.rekaman.map(x => `
-    <div class="rec ready"><div class="rec-icon">${ic.play}</div>
-      <div><h3>${esc(x.judul)}</h3><p>Rekaman pembekalan</p></div>
-      <a class="btn" href="${esc(x.url)}" target="_blank" rel="noopener">Tonton ${ic.arrow}</a></div>`).join('') + `</div>`;
+  const embed = u => { const m = String(u).match(/drive\.google\.com\/file\/d\/([\w-]+)/); return m ? `https://drive.google.com/file/d/${m[1]}/preview` : null; };
+  recEl.innerHTML = `<div class="rec-list">` + CONFIG.rekaman.map(x => {
+    const e = embed(x.url);
+    return `<div class="rec ready">
+      ${e ? `<div class="video"><iframe src="${esc(e)}" title="${esc(x.judul)}" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe></div>` : ''}
+      <div class="rec-icon">${ic.play}</div>
+      <div><h3>${esc(x.judul)}</h3><p>Jika video tidak tampil, buka langsung di Google Drive.</p></div>
+      <a class="btn" href="${esc(x.url)}" target="_blank" rel="noopener">Buka di Drive ${ic.arrow}</a></div>`;
+  }).join('') + `</div>`;
 }
 </script>
 </body>
